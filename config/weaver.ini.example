@@ -25,8 +25,8 @@ pyramid.default_locale_name = en
 #   for an example, see the 'tests/smoke/' definitions (it uses the "mongodb" hostname from 'make test-smore' call)
 #   otherwise, for local environments, it is assumed a "mongodb" service is running on the "localhost" instance
 #   see also the "celery" worker configuration for the broker and result backend settings related to DB connexion
-mongodb.host = localhost
-# mongodb.host = mongodb
+# mongodb.host = localhost
+mongodb.host = mongodb
 mongodb.port = 27017
 mongodb.db_name = weaver
 
@@ -136,12 +136,13 @@ weaver.cwl_prov = true
 
 # --- Weaver WPS settings ---
 weaver.wps = true
-weaver.wps_url =
+# Keep the public API at weaver.url while workers use the Compose service internally.
+weaver.wps_url = http://weaver.internal:4001/ows/wps
 weaver.wps_path = /ows/wps
 weaver.wps_output = true
 weaver.wps_output_context =
 weaver.wps_output_dir = /tmp/weaver/wps-outputs
-weaver.wps_output_url =
+weaver.wps_output_url = http://localhost:8000
 weaver.wps_output_path = /wpsoutputs
 weaver.wps_output_s3_bucket =
 weaver.wps_output_s3_region =
@@ -223,8 +224,8 @@ weaver.vault_dir = /tmp/vault
 #   for an example, see the 'tests/smoke/' definitions (it uses the "mongodb" hostname from 'make test-smore' call)
 #   otherwise, for local environments, it is assumed a "mongodb" service is running on the "localhost" instance
 #   this broker can be the same or a distinct one from the one used by weaver for process and job management
-# BROKER_URL = mongodb://mongodb:27017/celery
-BROKER_URL = mongodb://localhost:27017/celery
+BROKER_URL = mongodb://mongodb:27017/celery
+# BROKER_URL = mongodb://localhost:27017/celery
 # Result backend is required for SYNC execution.
 #   Using only the backend type matching the broker URL will automatically resolve to use it database location.
 #   For an alternative result location, provide the full backend directly rather than using "mongodb_backend_settings".
@@ -232,8 +233,7 @@ BROKER_URL = mongodb://localhost:27017/celery
 #   also not found. If more configuration are required, consider using a "celeryconfig" (and "USE_CELERYCONFIG = True").
 #   That configuration should be placed at the root of weaver since "pyramid_celery" doesn't support custom locations.
 #       https://github.com/sontek/pyramid_celery/pull/89
-RESULT_BACKEND = mongodb
-# RESULT_BACKEND = mongodb://mongodb:27017/celery
+RESULT_BACKEND = mongodb://mongodb:27017/celery
 
 ###
 # wsgi server configuration
@@ -246,7 +246,8 @@ RESULT_BACKEND = mongodb
 use = egg:gunicorn#main
 bind = 0.0.0.0:4001
 workers = 10
-timeout = 10
+# Must exceed weaver.execute_sync_max_wait so synchronous requests can finish cleanly.
+timeout = 30
 
 # --- waitress ---
 # use = egg:waitress#main
