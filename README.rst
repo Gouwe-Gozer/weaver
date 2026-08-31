@@ -2,6 +2,36 @@
 Weaver
 =============================================
 
+---------------------------------------------
+Local Docker quick start (this fork)
+---------------------------------------------
+
+This repository is a fork of `CRIM's Weaver <https://github.com/crim-ca/weaver>`_.
+Its example configuration keeps the public API on ``localhost`` while containers communicate through their
+Docker Compose service names.
+The only host prerequisite for this setup is Docker Engine with Docker Compose v2 and permission to use its daemon;
+Python and Conda are not required.
+
+From the repository root, start the complete local stack with:
+
+.. code-block:: shell
+
+    docker compose --project-directory . -f docker/docker-compose.yml.example up -d
+
+The initial startup can take about a minute. Once ready, the Weaver API is available at
+http://localhost:4001 and its interactive API documentation at http://localhost:4001/api.
+Verify it with:
+
+.. code-block:: shell
+
+    curl http://localhost:4001/
+
+Port ``8000`` serves process output files; it is not the Weaver API. Stop the stack with:
+
+.. code-block:: shell
+
+    docker compose --project-directory . -f docker/docker-compose.yml.example down
+
 \| `Summary`_
 \| `Features`_
 \| `Links`_

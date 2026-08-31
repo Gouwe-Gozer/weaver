@@ -34,8 +34,10 @@ services:
     networks:
       # network 'default' is created by default by docker-compose
       # adjust to whichever service that offers HTTP access if using more advanced networking definitions
-      - default
-      - mongodb
+      default: {}
+      mongodb:
+        aliases:
+          - weaver.internal
     restart: always
     logging: *default-logging
 
